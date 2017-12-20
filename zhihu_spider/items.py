@@ -11,4 +11,8 @@ import scrapy
 class ZhihuSpiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
+    username = scrapy.Field()
+    userId = scrapy.Field()
+    followers = scrapy.Field()
+    following = scrapy.Field()
+    title = scrapy.Field()
