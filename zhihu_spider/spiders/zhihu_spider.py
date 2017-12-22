@@ -8,14 +8,16 @@ class zhihu(scrapy.Spider):
     name="zhihu"
     allowed_domains = ["www.zhihu.com"]
     start_urls = [
-            r'https://www.zhihu.com/people/liancheng/followers',
+            r'https://www.zhihu.com/people/liancheng/followers?page=1',
         ]
 
     def parse(self, response):
         selector = Selector(response)
-        fans1 = selector.css('div.Profile-mainColumn:first-child')
+
+        fans = selector.css("div#Profile-following a.UserLink-link::attr(href)").extract()
         print(response.body)
         print("----------------")
-        print(fans1)
+        #只能获取前3个粉丝的url（每页总共20个粉丝）
+        print(fans)
 
 
