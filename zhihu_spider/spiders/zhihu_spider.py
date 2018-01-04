@@ -15,32 +15,36 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
 
 
 class zhihu(scrapy.Spider):
+    # selenium配置
+    chromedriver = "D:\software\webdriver\chromedriver.exe"
+    browser = webdriver.Chrome(chromedriver)
+    # scrapy配置
     name="zhihu"
     allowed_domains = ["www.zhihu.com"]
     start_urls = [
-            r'https://www.zhihu.com/people/qin.chao/activities',
+            r'https://www.zhihu.com/people/figo-zhu/followers?page=1',
         ]
+    pageNum = 1
 
     def parse(self, response):
-        selector = Selector(response)
-
-        url = selector.css('.Button.NumberBoard-item.Button--plain:nth-child(2)::attr(href)').extract()
-        url_full = "http://" + self.allowed_domains[0] + url[0]
-        tuple = (url_full,)
-        yield Request(url=tuple[0], callback=self.parse_post, dont_filter=True)
-
-    def parse_post(self, response):
-        print("url is2: " + response.url)
-        chromedriver = "D:\software\webdriver\chromedriver.exe"
-        browser = webdriver.Chrome(chromedriver)
-        browser.get(response.url)
-
+        self.browser.get(response.url)
         time.sleep(1)
-        print(browser.page_source)
 
+        body = self.browser.page_source
+        selector = Selector(text=body)
+        fansLink = selector.css("div#Profile-following div.ContentItem-head a.UserLink-link::attr(href)").extract()
+        for link in fansLink:
+            self.writeData(link.replace("/people/", ""))
 
+        nextPage = selector.css("button.Button.PaginationButton.PaginationButton-next.Button--plain").extract()
+        if len(nextPage) == 1:
+            self.pageNum += 1
+            nextPageUrl = "https://www.zhihu.com/people/figo-zhu/followers?page=%s" %self.pageNum
+            print("url is %s" %nextPageUrl)
+            yield Request(url=nextPageUrl, callback=self.parse)
 
-
-
-
-
+    # 用于记录所有粉丝的link
+    def writeData(self, data):
+        print(data)
+        with open("z:/zhihu.txt", 'a') as f:
+            f.write(data + "\n")
