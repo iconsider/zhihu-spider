@@ -67,6 +67,7 @@ ROBOTSTXT_OBEY = True
 # 分配给每个类的整型值，确定了他们运行的顺序，item按数字从低到高的顺序，通过pipeline，通常将这些数字定义在0-1000范围内。
 ITEM_PIPELINES = {
    'zhihu_spider.pipelines.DuplicatesPipeline': 300,
+   'zhihu_spider.pipelines.savePipeLine': 301,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -76,7 +77,7 @@ AUTOTHROTTLE_ENABLED = True
 # 初始下载延迟(单位:秒)
 AUTOTHROTTLE_START_DELAY = 1
 # The maximum download delay to be set in case of high latencies
-#AUTOTHROTTLE_MAX_DELAY = 60
+AUTOTHROTTLE_MAX_DELAY = 5
 # The average number of requests Scrapy should be sending in parallel to
 # each remote server
 #AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
@@ -90,3 +91,7 @@ AUTOTHROTTLE_START_DELAY = 1
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# DEPTH_PRIORITY = 1
+# SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+# SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'

@@ -29,3 +29,11 @@ class DuplicatesPipeline(object):
         time.sleep(5)
         # 关闭浏览器
         spider.browser.quit();
+
+class savePipeLine(object):
+    def __init__(self):
+        pass
+
+    def process_item(self, item, spider):
+        with open("z:/zhihu.txt", 'a') as file:
+            file.write(item['userId'] + "\n")
