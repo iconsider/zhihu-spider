@@ -10,7 +10,10 @@ from selenium import webdriver
 import io
 import sys
 
+
 #改变标准输出的默认编码
+from zhihu_spider.items import UserItem
+
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
 
 
@@ -34,7 +37,10 @@ class zhihu(scrapy.Spider):
         selector = Selector(text=body)
         fansLink = selector.css("div#Profile-following div.ContentItem-head a.UserLink-link::attr(href)").extract()
         for link in fansLink:
-            self.writeData(link.replace("/people/", ""))
+            userTemp = UserItem()
+            userTemp["userId"] = link.replace("/people/", "")
+            # 继承scrapy.Item的类的对象都会被Pipeline抓取到
+            yield userTemp
 
         nextPage = selector.css("button.Button.PaginationButton.PaginationButton-next.Button--plain").extract()
         if len(nextPage) == 1:
@@ -42,9 +48,3 @@ class zhihu(scrapy.Spider):
             nextPageUrl = "https://www.zhihu.com/people/figo-zhu/followers?page=%s" %self.pageNum
             print("url is %s" %nextPageUrl)
             yield Request(url=nextPageUrl, callback=self.parse)
-
-    # 用于记录所有粉丝的link
-    def writeData(self, data):
-        print(data)
-        with open("z:/zhihu.txt", 'a') as f:
-            f.write(data + "\n")
